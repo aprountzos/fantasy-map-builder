@@ -71,7 +71,8 @@ export default function MyMapPage() {
         </pre>
       </div>
 
-      <div className="w-full max-w-4xl bg-black/30 backdrop-blur-sm rounded-3xl p-6 shadow-2xl space-y-6">
+      {/* Steps */}
+      <div className="w-full max-w-4xl bg-black/30 backdrop-blur-sm rounded-3xl p-6 shadow-2xl space-y-6 mb-8">
         <h2 className="text-2xl font-bold text-indigo-400 mb-4">Steps</h2>
         <ol className="list-decimal list-inside space-y-4 text-gray-200">
           <li>Use the editor to create your map and export JSON using the <code>Export JSON</code> button.</li>
@@ -80,6 +81,37 @@ export default function MyMapPage() {
           <li>Pass the JSON data as props to <code>ExportedFantasyMapViewer</code> as shown above.</li>
           <li>All coordinates are in percentages for responsive scaling.</li>
         </ol>
+      </div>
+
+      {/* Styling Instructions */}
+      <div className="w-full max-w-4xl bg-black/30 backdrop-blur-sm rounded-3xl p-6 shadow-2xl space-y-6">
+        <h2 className="text-2xl font-bold text-indigo-400 mb-4">Styling Instructions</h2>
+        <p className="text-gray-200">
+          You can customize the look of your interactive map by modifying the following CSS classes or Tailwind utilities:
+        </p>
+        <ul className="list-disc list-inside space-y-3 text-gray-200">
+          <li>
+            <strong>Regions:</strong> Change fill color, opacity, stroke, and hover effects. Example: <code>fill-opacity-40 hover:opacity-60 stroke-2</code>.
+          </li>
+          <li>
+            <strong>Locations:</strong> Adjust size, color, border, and animation. Example: <code>w-4 h-4 bg-red-500 border-2 border-white animate-pulse hover:scale-125</code>.
+          </li>
+          <li>
+            <strong>Legend:</strong> Customize background, text color, padding, rounded corners, and scrollbar using <code>overflow-auto</code> and <code>::-webkit-scrollbar</code> for a modern fantasy look.
+          </li>
+          <li>
+            <strong>Hover Tooltip:</strong> Change position, background, text color, shadow, and transition. Example: <code>bg-black/70 text-white px-2 py-1 rounded text-xs shadow-lg</code>.
+          </li>
+          <li>
+            <strong>Modal:</strong> Adjust modal background, blur, border radius, shadow, padding, and transition effects for lore display.
+          </li>
+          <li>
+            <strong>Container:</strong> Overall padding, background gradient, rounded corners, and shadow can be tweaked to fit your theme.
+          </li>
+        </ul>
+        <p className="text-gray-200 mt-4">
+          By combining Tailwind utilities with custom CSS, you can create a unique fantasy map style that fits your project perfectly.
+        </p>
       </div>
     </div>
   )

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@tailwindcss/typography": "^0.5.19",
     "eslint-config-next": "^15.5.3",
     "framer-motion": "^12.23.19",
     "konva": "^10.0.2",
@@ -20,7 +21,9 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-konva": "^19.0.10",
+    "react-markdown": "^10.1.0",
     "react-zoom-pan-pinch": "^3.2.2",
+    "remark-gfm": "^4.0.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.6",
     "use-image": "^1.1.4"

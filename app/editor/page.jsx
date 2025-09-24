@@ -8,6 +8,7 @@ import ExportedFantasyMapViewer from '../../components/ExportedFantasyMapViewer'
 
 export default function EditorPage() {
   const [mapSrc, setMapSrc] = useState(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}fantasy-map.png`);
+
   const [img] = useImage(mapSrc, 'anonymous')
   const stageRef = useRef(null)
   const imageRef = useRef(null)
@@ -189,11 +190,33 @@ export default function EditorPage() {
                   ))}
                   {currentPoints.length>0 && <Line points={currentPoints.flat()} stroke="#f59e0b" strokeWidth={2}/>}
                   {currentPoints.map((p,i)=><Circle key={i} x={p[0]} y={p[1]} radius={4} fill="#fff" stroke="#000"/>)}
-                  {locations.map(loc=>{
-                    const rect = getImageRect(); if(!rect) return null
-                    const ax=(loc.x/100)*rect.width+rect.x; const ay=(loc.y/100)*rect.height+rect.y
-                    return <Circle key={loc.id} x={ax} y={ay} radius={8} fill="red" stroke="white" draggable onDragEnd={e=>onMarkerDragEnd(e,loc.id)} onClick={e=>{e.cancelBubble=true; setSelectedLocId(loc.id); setSelectedRegionId(null)}} className="shadow-lg transition-transform hover:scale-125"/>
+                  {locations.map(loc => {
+                    const rect = getImageRect(); 
+                    if (!rect) return null;
+                    const ax = (loc.x / 100) * rect.width + rect.x;
+                    const ay = (loc.y / 100) * rect.height + rect.y;
+                    const isSelected = selectedLocId === loc.id;
+
+                    return (
+                      <Circle
+                        key={loc.id}
+                        x={ax}
+                        y={ay}
+                        radius={isSelected ? 10.5 : 8} // scale 105% when clicked
+                        fill="red"
+                        stroke={isSelected ? "yellow" : "white"}
+                        draggable
+                        onDragEnd={e => onMarkerDragEnd(e, loc.id)}
+                        onClick={e => {
+                          e.cancelBubble = true;
+                          setSelectedLocId(loc.id);
+                          setSelectedRegionId(null);
+                        }}
+                        shadowBlur={isSelected ? 10 : 5}
+                      />
+                    );
                   })}
+
                 </Layer>
               </Stage>
             </div>

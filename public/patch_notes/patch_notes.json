@@ -1,0 +1,12 @@
+[
+  {
+    "version": "1.0.0",
+    "date": "2025-09-24",
+    "notes": "Initial release: Editor, map export, interactive viewer."
+  },
+  {
+    "version": "1.0.1",
+    "date": "2025-09-24",
+    "notes": "### Enhancements\n\n- **Interactive Markers Scaling:** Clicking on a location marker in the editor now scales it up to 105% for better visual feedback.\n- **Visual Feedback Improvements:** Selected markers now have a subtle yellow ring.\n- **Patch Notes Display:** About page now displays patch notes with proper Markdown formatting.\n\n### Bug Fixes\n\n- Fixed issue where clicking a location marker did not provide any interactive feedback."
+  }
+]
