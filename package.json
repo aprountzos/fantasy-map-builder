@@ -1,0 +1,30 @@
+{
+  "name": "fantasy-map-complete",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "eslint-config-next": "^15.5.3",
+    "framer-motion": "^12.23.19",
+    "konva": "^10.0.2",
+    "next": "^15.5.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-konva": "^19.0.10",
+    "react-zoom-pan-pinch": "^3.2.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.6",
+    "use-image": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/node": "24.5.2",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0"
+  }
+}
