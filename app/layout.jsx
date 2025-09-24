@@ -5,6 +5,9 @@ import EditorInstructionsWidget from '../components/EditorInstructionsWidget'
 export const metadata = {
   title: 'Fantasy Map Builder',
   description: 'Map editor + viewer',
+  icons: {
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}favicon.png`, // path relative to the public folder
+  },
 }
 
 export default function RootLayout({ children }) {
