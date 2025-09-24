@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 export default function About() {
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white overflow-hidden p-6">
@@ -24,6 +24,13 @@ export default function About() {
             <li><strong>Version:</strong> 1.0.0</li>
             <li><strong>Author:</strong> Athanasios Prountzos</li>
             <li><strong>Website:</strong> <Link href="/" className="text-indigo-400 hover:underline">Home / Editor</Link></li>
+            <li className="flex items-center gap-2">
+              <strong>GitHub:</strong>
+              <Link href="https://github.com/aprountzos/fantasy-map-builder" target="_blank" className="text-indigo-400 hover:underline flex items-center gap-1 ml-1">
+                <ArrowTopRightOnSquareIcon className="w-5 h-5" />
+                Repository
+              </Link>
+            </li>
             <li><strong>License:</strong> MIT</li>
           </ul>
         </div>
