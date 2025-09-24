@@ -1,14 +1,14 @@
 {
+  "homepage": "https://aprountzos.github.io/fantasy-map-builder",
   "name": "fantasy-map-complete",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://aprountzos.github.io/fantasy-map-builder",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "export": "next build",
-    "predeploy": "npm run build && npm run export",
+    "export": "next build && next export",
+    "predeploy": "npm run export",
     "deploy": "gh-pages -d out"
   },
   "dependencies": {

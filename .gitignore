@@ -6,7 +6,7 @@ pnpm-lock.yaml
 
 # Next.js build output
 .next/
-out/
+# out/
 
 # Local environment variables
 .env
