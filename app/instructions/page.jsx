@@ -47,7 +47,7 @@ export default function MyMapPage() {
 
       {/* Download component */}
       <a
-        href="/downloads/ExportedFantasyMapViewer.jsx"
+        href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}downloads/ExportedFantasyMapViewer.jsx`}
         download
         className="mb-8 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl shadow-xl transition-all hover:scale-105"
       >
