@@ -96,7 +96,8 @@ function generateRandomData(numRegions = 3, numLocations = 5) {
 
 export default function ExamplePage() {
   const [data, setData] = useState({ regions: [], locations: [] });
-  const mapImage = "/fantasy-map.png"; // must exist in /public
+  // Reference image in /public folder
+  const mapImage = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}fantasy-map.png`;
 
   useEffect(() => {
     const randomData = generateRandomData();
