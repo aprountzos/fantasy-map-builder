@@ -1,13 +1,16 @@
-/** @type {import('next').NextConfig} */
-
+// next.config.js
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',              // fully static export
-  basePath: basePath, // your repo name
-  assetPrefix: basePath, // for CSS/JS/images to load correctly
-  reactStrictMode: true,
-
+  basePath,
+  assetPrefix: basePath,
+  output: 'export',          // NEW: generates static HTML automatically
+  experimental: {
+    images: {
+      allowFutureImage: true // if you use next/image with static export
+    }
+  }
 };
 
 module.exports = nextConfig;

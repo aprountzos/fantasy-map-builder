@@ -41,11 +41,10 @@ jobs:
         with:
           static_site_generator: next
 
-      # 5️⃣ Build and export Next.js site
-      - name: Build and Export Next.js 🏗️
+      # 5️⃣ Build Next.js site
+      - name: Build Next.js 🏗️
         run: |
           npx next build
-          npx next export
 
       # 6️⃣ Upload static site artifact
       - name: Upload artifact 📡
