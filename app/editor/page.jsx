@@ -11,25 +11,27 @@ export default function EditorPage() {
 
   // -- state
   const [mapSrc, setMapSrc] = useState(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}fantasy-map.png`)
-  const [img] = useImage(mapSrc, 'anonymous')
+  const [img] = useImage(mapSrc, 'anonymous');
+  const [regions, setRegions] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [scale, setScale] = useState(1);
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
+  const [isMiddlePanning, setIsMiddlePanning] = useState(false);
 
-  const [regions, setRegions] = useState([])
-  const [locations, setLocations] = useState([])
+  const [mode, setMode] = useState('null'); // 'draw' | 'marker' | null
+  const [currentPoints, setCurrentPoints] = useState([]); // percentage coordinates (FIXED)
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: '', lore: '', color: '#f59e0b', link: '' });
 
-  const [mode, setMode] = useState(null) // 'draw' | 'marker' | null
-  const [currentPoints, setCurrentPoints] = useState([]) // stage coordinates
-  const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', lore: '', color: '#f59e0b', link: '' })
-
-  const [selectedRegionId, setSelectedRegionId] = useState(null)
-  const [selectedLocId, setSelectedLocId] = useState(null)
+  const [selectedRegionId, setSelectedRegionId] = useState(null);
+  const [selectedLocId, setSelectedLocId] = useState(null);
 
   // responsive stage size (in pixels)
-  const containerRef = useRef(null)
-  const stageRef = useRef(null)
-  const [stageSize, setStageSize] = useState({ width: BASE_W, height: BASE_H })
+  const containerRef = useRef(null);
+  const stageRef = useRef(null);
+  const [stageSize, setStageSize] = useState({ width: BASE_W, height: BASE_H });
 
-  const idRef = useRef(1)
+  const idRef = useRef(1);
 
   // seed example content (keeps compatibility with your previous state)
   useEffect(() => {
@@ -80,10 +82,102 @@ export default function EditorPage() {
     }
   }, [])
 
+  let lastDist = 0;
+
+  function handleTouchMove(e) {
+    if (e.evt.touches.length === 2) {
+      e.evt.preventDefault();
+      const stage = stageRef.current;
+      const t1 = e.evt.touches[0];
+      const t2 = e.evt.touches[1];
+      const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+
+      if (lastDist) {
+        const scaleBy = dist / lastDist;
+        const oldScale = stage.scaleX();
+        const newScale = oldScale * scaleBy;
+
+        // center between the two fingers
+        const center = {
+          x: (t1.clientX + t2.clientX) / 2,
+          y: (t1.clientY + t2.clientY) / 2,
+        };
+        const mousePointTo = {
+          x: center.x / oldScale - stage.x() / oldScale,
+          y: center.y / oldScale - stage.y() / oldScale,
+        };
+
+        stage.scale({ x: newScale, y: newScale });
+
+        const newPos = {
+          x: -(mousePointTo.x - center.x / newScale) * newScale,
+          y: -(mousePointTo.y - center.y / newScale) * newScale,
+        };
+        stage.position(newPos);
+        stage.batchDraw();
+      }
+
+      lastDist = dist;
+    }
+  }
+  function handleTouchEnd(e) {
+    if (e.evt.touches.length < 2) lastDist = 0;
+  }
+
+
+  function stageTouchStart(e) {
+    e.evt.preventDefault();
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const touch = e.evt.touches[0]; // first touch
+    if (!touch) return;
+
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return;
+
+    stageMouseDown({ ...e, target: stage, getPointerPosition: () => pointer });
+  }
+
+  function handleWheel(e) {
+    e.evt.preventDefault();
+    const scaleBy = 1.05; // zoom factor
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const oldScale = stage.scaleX();
+    const mousePointTo = {
+      x: stage.getPointerPosition().x / oldScale - stage.x() / oldScale,
+      y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale,
+    };
+
+    const newScale = e.evt.deltaY > 0 ? oldScale / scaleBy : oldScale * scaleBy;
+    setScale(newScale);
+
+    stage.scale({ x: newScale, y: newScale });
+
+    const newPos = {
+      x: -(mousePointTo.x - stage.getPointerPosition().x / newScale) * newScale,
+      y: -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale,
+    };
+    stage.position(newPos);
+    stage.batchDraw();
+  }
+
+
   // helpers: percent <-> absolute (stage) coords
   function percentToAbsolute(pointsPercent) {
-    return pointsPercent.flatMap(([px, py]) => [(px / 100) * stageSize.width, (py / 100) * stageSize.height])
+    return pointsPercent.flatMap(([px, py]) => [
+      (px / 100) * stageSize.width,
+      (py / 100) * stageSize.height
+    ]);
   }
+
+  function getCircleRadius(baseRadius = 8) {
+    // factor in stage size and zoom scale
+    return (stageSize.width / BASE_W) * baseRadius / scale;
+  }
+
 
   function absoluteToPercent([ax, ay]) {
     return [(ax / stageSize.width) * 100, (ay / stageSize.height) * 100]
@@ -91,31 +185,64 @@ export default function EditorPage() {
 
   // stage click handler for draw/marker
   function stageMouseDown(e) {
-    const stage = stageRef.current
-    if (!stage) return
-    const pos = stage.getPointerPosition()
-    if (!pos) return
-    // ensure click inside stage bounds (0..width / 0..height)
-    const { x, y } = pos
-    if (x < 0 || y < 0 || x > stageSize.width || y > stageSize.height) return
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // 🖱 Middle mouse panning
+    if (e.evt.button === 1) {
+      e.evt.preventDefault();
+      e.evt.stopPropagation();
+      setIsMiddlePanning(true);
+      stage.draggable(true);
+      stage.container().style.cursor = "grabbing";
+      return;
+    }
+
+    // Left click: drawing or adding marker
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return;
+
+    const scale = stage.scaleX(); // uniform scale
+
+    // Convert to unscaled stage coordinates
+    const x = (pointer.x - stage.x()) / scale;
+    const y = (pointer.y - stage.y()) / scale;
 
     if (mode === 'draw') {
-      // add a vertex
-      setCurrentPoints((p) => [...p, [x, y]])
+      // FIXED: store as % to make responsive
+      const pctX = (x / stageSize.width) * 100;
+      const pctY = (y / stageSize.height) * 100;
+
+      setCurrentPoints((pts) => [...pts, [pctX, pctY]]);
     } else if (mode === 'marker') {
-      const pct = absoluteToPercent([x, y])
-      setLocations((ls) => [...ls, { id: idRef.current++, name: 'New Location', lore: '', x: pct[0], y: pct[1], link: '' }])
-      setMode(null)
+      const pctX = (x / stageSize.width) * 100;
+      const pctY = (y / stageSize.height) * 100;
+      setLocations((ls) => [
+        ...ls,
+        { id: idRef.current++, name: 'New Location', lore: '', x: pctX, y: pctY, link: '' }
+      ]);
+      setMode(null);
+    }
+  }
+
+  function stageMouseUp(e) {
+    if (isMiddlePanning && e.evt.button === 1) {
+      const stage = stageRef.current;
+      if (!stage) return;
+
+      stage.draggable(false); // disable drag again
+      stage.container().style.cursor = "default";
+      setIsMiddlePanning(false);
     }
   }
 
   // finish drawing region: require >=3 points, convert to percent coords
   function finishDrawing() {
     if (currentPoints.length < 3) return alert('Need at least 3 points to create a region.')
-    const percent = currentPoints.map((p) => absoluteToPercent(p))
+    // FIXED: currentPoints already in percent coords
     setRegions((rs) => [
       ...rs,
-      { id: idRef.current++, name: formData.name || 'Region', lore: formData.lore, color: formData.color, pointsPercent: percent, link: formData.link || '' }
+      { id: idRef.current++, name: formData.name || 'Region', lore: formData.lore, color: formData.color, pointsPercent: currentPoints, link: formData.link || '' }
     ])
     setCurrentPoints([])
     setMode(null)
@@ -126,7 +253,7 @@ export default function EditorPage() {
   function startDrawing() {
     setMode('draw')
     setCurrentPoints([])
-    setShowForm(true)
+    // setShowForm(true)
     setSelectedLocId(null)
     setSelectedRegionId(null)
   }
@@ -138,16 +265,36 @@ export default function EditorPage() {
 
   // update a vertex while dragging
   function updateVertex(regionId, vertexIndex, absXY) {
-    const newPct = absoluteToPercent(absXY)
-    setRegions((prev) => prev.map((r) => (r.id === regionId ? { ...r, pointsPercent: r.pointsPercent.map((pt, i) => (i === vertexIndex ? newPct : pt)) } : r)))
+    const newPct = absoluteToPercent(absXY);
+    setRegions((prev) =>
+      prev.map((r) =>
+        r.id === regionId
+          ? { ...r, pointsPercent: r.pointsPercent.map((pt, i) => (i === vertexIndex ? newPct : pt)) }
+          : r
+      )
+    );
   }
 
   // marker drag end -> update location percent coords
   function onMarkerDragEnd(e, locId) {
-    const { x, y } = e.target.position()
-    const pct = absoluteToPercent([x, y])
-    setLocations((prev) => prev.map((l) => (l.id === locId ? { ...l, x: Math.max(0, Math.min(100, pct[0])), y: Math.max(0, Math.min(100, pct[1])) } : l)))
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const scale = stage.scaleX(); // uniform scale
+    const absX = e.target.x();
+    const absY = e.target.y();
+
+    const pct = absoluteToPercent([absX, absY]);
+
+    setLocations((prev) =>
+      prev.map((l) =>
+        l.id === locId
+          ? { ...l, x: Math.max(0, Math.min(100, pct[0])), y: Math.max(0, Math.min(100, pct[1])) }
+          : l
+      )
+    );
   }
+
 
   // undo helpers
   function undoLastPoint() {
@@ -230,7 +377,17 @@ export default function EditorPage() {
                 height={stageSize.height}
                 ref={stageRef}
                 onMouseDown={stageMouseDown}
-                style={{ display: 'block', touchAction: 'none' }} // prevent mobile dragscroll
+                onMouseUp={stageMouseUp}
+                onTouchStart={stageTouchStart}  // <--- single tap for touch
+                onTouchMove={handleTouchMove}   // <--- pinch zoom
+                onTouchEnd={handleTouchEnd}
+                onWheel={handleWheel}
+                draggable={false}
+                style={{ 
+                  cursor: isMiddlePanning 
+                    ? "grabbing" 
+                    : "default" // always default unless panning
+                }}
               >
                 <Layer>
                   {/* background image as KonvaImage */}
@@ -245,7 +402,7 @@ export default function EditorPage() {
                         fill={r.color}
                         opacity={0.35}
                         stroke={r.color}
-                        strokeWidth={2}
+                        strokeWidth={1 / scale}
                         onClick={(e) => { e.cancelBubble = true; setSelectedRegionId(r.id); setSelectedLocId(null) }}
                         onMouseEnter={enterPointer}
                         onMouseLeave={leavePointer}
@@ -259,9 +416,10 @@ export default function EditorPage() {
                             key={idx}
                             x={ax}
                             y={ay}
-                            radius={6}
+                            radius={getCircleRadius(6)}
                             fill="#facc15"
                             stroke="#f59e0b"
+                            strokeWidth={getCircleRadius(6) * 0.25}
                             draggable
                             onDragMove={(e) => updateVertex(r.id, idx, [e.target.x(), e.target.y()])}
                             onMouseEnter={enterPointer}
@@ -272,11 +430,14 @@ export default function EditorPage() {
                     </Group>
                   ))}
 
-                  {/* drawing preview */}
+                  {/* drawing preview - FIXED: convert percent to absolute for display */}
                   {currentPoints.length > 0 && (
                     <>
-                      <Line points={currentPoints.flat()} stroke="#f59e0b" strokeWidth={2} />
-                      {currentPoints.map((p, i) => <Circle key={i} x={p[0]} y={p[1]} radius={4} fill="#fff" stroke="#000" />)}
+                      <Line points={percentToAbsolute(currentPoints)} stroke="#f59e0b" strokeWidth={2} />
+                      {currentPoints.map((p, i) => {
+                        const [ax, ay] = [(p[0] / 100) * stageSize.width, (p[1] / 100) * stageSize.height];
+                        return <Circle key={i} x={ax} y={ay} radius={getCircleRadius(4)} fill="#fff" stroke="#000" strokeWidth={getCircleRadius(4) * 0.25} />
+                      })}
                     </>
                   )}
 
@@ -290,9 +451,10 @@ export default function EditorPage() {
                         key={loc.id}
                         x={ax}
                         y={ay}
-                        radius={isSelected ? 10.5 : 8}
+                        radius={isSelected ? getCircleRadius(10.5) : getCircleRadius(8)}
                         fill="red"
                         stroke={isSelected ? 'yellow' : 'white'}
+                        strokeWidth={(isSelected ? getCircleRadius(10.5) : getCircleRadius(8)) * 0.25}
                         draggable
                         onDragEnd={(e) => onMarkerDragEnd(e, loc.id)}
                         onClick={(e) => { e.cancelBubble = true; setSelectedLocId(loc.id); setSelectedRegionId(null) }}
@@ -346,6 +508,12 @@ export default function EditorPage() {
                 </div>
               )
             })()}
+
+            {!selectedRegionId && !selectedLocId && (
+              <div className="text-sm text-gray-400 mb-3">
+                Click on a region or marker to edit it
+              </div>
+            )}
           </div>
 
           {/* list (scrollable) */}
@@ -385,6 +553,8 @@ export default function EditorPage() {
             <textarea className="w-full p-2 mb-2 rounded bg-gray-800" value={formData.lore} onChange={(e) => setFormData(fd => ({ ...fd, lore: e.target.value }))} rows={4} />
             <label className="block mb-1 text-sm">Color</label>
             <input type="color" className="w-full p-2 mb-3 rounded bg-gray-800" value={formData.color} onChange={(e) => setFormData(fd => ({ ...fd, color: e.target.value }))} />
+            <label className="block mb-1 text-sm">Link (optional)</label>
+            <input type="url" className="w-full p-2 mb-3 rounded bg-gray-800" value={formData.link} onChange={(e) => setFormData(fd => ({ ...fd, link: e.target.value }))} placeholder="https://example.com" />
             <div className="flex gap-2 justify-end">
               <button onClick={() => { setShowForm(false); setCurrentPoints([]) }} className="px-3 py-1 rounded bg-gray-700">Cancel</button>
               <button onClick={finishDrawing} className="px-3 py-1 rounded bg-indigo-600 text-white">Save Region</button>
