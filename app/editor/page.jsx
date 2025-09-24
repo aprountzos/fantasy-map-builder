@@ -7,7 +7,7 @@ import ExportedFantasyMapViewer from '../../components/ExportedFantasyMapViewer'
 
 
 export default function EditorPage() {
-  const [mapSrc, setMapSrc] = useState(`${process.env.NEXT_PUBLIC_BASE_PATH || '/'}fantasy-map.png`);
+  const [mapSrc, setMapSrc] = useState(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}fantasy-map.png`);
   const [img] = useImage(mapSrc, 'anonymous')
   const stageRef = useRef(null)
   const imageRef = useRef(null)
