@@ -46,6 +46,9 @@ jobs:
         run: |
           npx next build
 
+      - name: Add .nojekyll
+        run: touch ./out/.nojekyll
+
       # 6️⃣ Upload static site artifact
       - name: Upload artifact 📡
         uses: actions/upload-pages-artifact@v3
