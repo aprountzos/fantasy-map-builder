@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import ExportedFantasyMapViewer from "../../components/ExportedFantasyMapViewer";
 
-// Helper to generate random color
 function randomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -10,7 +9,6 @@ function randomColor() {
   return color;
 }
 
-// Random name generator
 const fantasyNames = [
   "Mystwood",
   "Dragonspire",
@@ -32,7 +30,6 @@ const lores = [
   "Tower of mages overlooking the plains.",
 ];
 
-// Generate random regions with guaranteed polygons
 function generateRandomData(numRegions = 3, numLocations = 5) {
   const regions = [];
   const locations = [];
@@ -47,7 +44,6 @@ function generateRandomData(numRegions = 3, numLocations = 5) {
     return name;
   }
 
-  // Regions
   for (let i = 0; i < numRegions; i++) {
     const name = randomName();
     const lore = lores[Math.floor(Math.random() * lores.length)];
@@ -72,10 +68,8 @@ function generateRandomData(numRegions = 3, numLocations = 5) {
     });
   }
 
-  // Locations (inside random region)
   for (let i = 0; i < numLocations; i++) {
     const region = regions[Math.floor(Math.random() * regions.length)];
-    // pick a random point near the first polygon vertex
     const vertex =
       region.pointsPercent[
         Math.floor(Math.random() * region.pointsPercent.length)
@@ -96,30 +90,40 @@ function generateRandomData(numRegions = 3, numLocations = 5) {
 
 export default function ExamplePage() {
   const [data, setData] = useState({ regions: [], locations: [] });
-  // Reference image in /public folder
   const mapImage = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}fantasy-map.png`;
 
   useEffect(() => {
-    const randomData = generateRandomData();
-    setData(randomData);
+    setData(generateRandomData());
   }, []);
 
   if (!data.regions.length)
     return <div className="text-white p-4">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
-      <h1 className="text-3xl font-bold mb-4 text-indigo-400">
+    <main className="relative min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white overflow-hidden pt-24 px-4">
+      {/* Background floating elements */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-purple-700 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-700 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-white/10 rounded-full animate-ping"></div>
+      <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-white/5 rounded-full animate-ping"></div>
+
+      {/* Header */}
+      <h1 className="text-4xl sm:text-5xl font-extrabold mb-2 text-indigo-300 drop-shadow-lg">
         Fantasy Map Viewer Example
       </h1>
-      <p className="mb-4 text-gray-300">
-        Randomly generated regions and locations on a fantasy map.
+      <p className="mb-6 text-gray-300 max-w-2xl text-center">
+        Randomly generated regions and locations on a fantasy map. Hover over
+        markers and regions to see details.
       </p>
-      <ExportedFantasyMapViewer
-        mapImage={mapImage}
-        regions={data.regions}
-        locations={data.locations}
-      />
-    </div>
+
+      {/* Viewer */}
+      <div className="w-full max-w-6xl p-4 bg-black/40 backdrop-blur-md rounded-3xl shadow-2xl mb-8">
+        <ExportedFantasyMapViewer
+          mapImage={mapImage}
+          regions={data.regions}
+          locations={data.locations}
+        />
+      </div>
+    </main>
   );
 }

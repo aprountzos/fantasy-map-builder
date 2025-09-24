@@ -37,7 +37,12 @@ export default function MyMapPage() {
 }`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white p-8 flex flex-col items-center">
+    <main className="relative min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white overflow-hidden pt-24">
+      {/* Background floating elements */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-purple-700 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-700 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-white/10 rounded-full animate-ping"></div>
+      <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-white/5 rounded-full animate-ping"></div>
       <h1 className="text-4xl font-extrabold text-indigo-300 mb-4 drop-shadow-lg">
         ExportedFantasyMapViewer Instructions
       </h1>
@@ -113,6 +118,6 @@ export default function MyMapPage() {
           By combining Tailwind utilities with custom CSS, you can create a unique fantasy map style that fits your project perfectly.
         </p>
       </div>
-    </div>
+    </main>
   )
 }
