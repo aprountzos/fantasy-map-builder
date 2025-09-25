@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+// ⬇️ Import your package.json
+import pkg from '../package.json' // adjust path if needed
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,6 +22,7 @@ export default function Navbar() {
         {/* Logo / Brand */}
         <div className="text-2xl font-extrabold text-white drop-shadow-lg flex items-center gap-2">
           🗺️ Fantasy Map
+          <span className="text-sm text-gray-400">v{pkg.version}</span>
         </div>
 
         {/* Desktop Links */}

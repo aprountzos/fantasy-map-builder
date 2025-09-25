@@ -117,7 +117,7 @@ export default function ExamplePage() {
       </p>
 
       {/* Viewer */}
-      <div className="w-full max-w-6xl p-4 bg-black/40 backdrop-blur-md rounded-3xl shadow-2xl mb-8">
+      <div className="w-full  p-4 bg-black/40 backdrop-blur-md rounded-3xl shadow-2xl mb-8">
         <ExportedFantasyMapViewer
           mapImage={mapImage}
           regions={data.regions}

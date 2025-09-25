@@ -8,5 +8,10 @@
     "version": "1.0.1",
     "date": "2025-09-24",
     "notes": "### Enhancements\n\n- **Interactive Markers Scaling:** Clicking on a location marker in the editor now scales it up to 105% for better visual feedback.\n- **Visual Feedback Improvements:** Selected markers now have a subtle yellow ring.\n- **Patch Notes Display:** About page now displays patch notes with proper Markdown formatting.\n\n### Bug Fixes\n\n- Fixed issue where clicking a location marker did not provide any interactive feedback."
+  },
+  {
+    "version": "1.0.2",
+    "date": "2025-09-25",
+    "notes": "### Enhancements\n\n- **Fullscreen Mode Improvements:** Fullscreen now correctly adjusts stage size and maintains aspect ratio.\n- **Touch Gestures:** Pinch-to-zoom and drag-to-pan now smoother on mobile devices.\n- **Legend Interaction:** Users can now move the legend to left, right, or bottom even in fullscreen mode.\n- **Hover Tooltips:** Hovering over locations and regions now shows detailed tooltips on desktop.\n- **Selection Highlighting:** Selected regions and locations are highlighted with cyan strokes; hover highlights with yellow.\n- **Modal Updates:** Modal now shows color indicators, lore descriptions, and optional external links with improved styling.\n\n### Bug Fixes\n\n- Fixed issue where stage scaling and panning could break after pinch gestures.\n- Fixed unassigned locations display in legend not updating correctly after region assignment."
   }
 ]

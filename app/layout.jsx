@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         <main className="flex-1 p-6">{children}</main>
         <EditorInstructionsWidget />
         <footer className="text-center text-gray-400 py-4 text-sm">
-          &copy; {new Date().getFullYear()} Fantasy Map Builder. All rights reserved.
+          © {new Date().getFullYear()} Fantasy Map Builder. Licensed under MIT.
         </footer>
       </body>
     </html>

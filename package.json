@@ -1,7 +1,7 @@
 {
   "homepage": "https://aprountzos.github.io/fantasy-map-builder",
   "name": "fantasy-map-complete",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
