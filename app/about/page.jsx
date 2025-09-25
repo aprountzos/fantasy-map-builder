@@ -63,40 +63,42 @@ export default function About() {
           </ul>
         </div>
         {/* Patch Notes */}
-        <div className="bg-black/50 backdrop-blur-md rounded-lg p-6 shadow-lg mb-6 w-full max-h-96 overflow-y-auto">
-          <h2 className="text-2xl font-semibold mb-3 text-indigo-400">Patch Notes</h2>
-          <ul className="text-gray-200 text-left space-y-3">
-            {patchNotes.map((p) => {
-              const isExpanded = expandedVersion === p.version
-              return (
-                <li key={p.version} className="border-l-4 border-indigo-600 pl-3">
-                  <div
-                    className="flex justify-between items-center cursor-pointer select-none"
-                    onClick={() => setExpandedVersion(isExpanded ? null : p.version)}
-                  >
-                    <span className="font-semibold">{p.version}</span>
-                    <span className="text-xs text-gray-400">{p.date}</span>
-                  </div>
-                  {isExpanded && (
-                    <div className="prose prose-invert text-gray-300 text-sm mt-2">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          h2: ({ node, ...props }) => <h2 className="text-indigo-400 font-semibold" {...props} />,
-                          h3: ({ node, ...props }) => <h3 className="text-indigo-300 font-semibold" {...props} />,
-                          li: ({ node, ...props }) => <li className="ml-4 list-disc" {...props} />,
-                        }}
-                      >
-                        {p.notes}
-                      </ReactMarkdown>
-                    </div>
-                  )}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+          <div className="flex flex-col w-full">
+            <div className="bg-black/50 backdrop-blur-md rounded-lg p-6 shadow-lg mb-6 flex-1 overflow-y-auto max-h-[60vh] sm:max-h-96">
 
+            <h2 className="text-2xl font-semibold mb-3 text-indigo-400">Patch Notes</h2>
+            <ul className="text-gray-200 text-left space-y-3">
+              {patchNotes.map((p) => {
+                const isExpanded = expandedVersion === p.version
+                return (
+                  <li key={p.version} className="border-l-4 border-indigo-600 pl-3">
+                    <div
+                      className="flex justify-between items-center cursor-pointer select-none"
+                      onClick={() => setExpandedVersion(isExpanded ? null : p.version)}
+                    >
+                      <span className="font-semibold">{p.version}</span>
+                      <span className="text-xs text-gray-400">{p.date}</span>
+                    </div>
+                    {isExpanded && (
+                      <div className="prose prose-invert text-gray-300 text-sm mt-2">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            h2: ({ node, ...props }) => <h2 className="text-indigo-400 font-semibold" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="text-indigo-300 font-semibold" {...props} />,
+                            li: ({ node, ...props }) => <li className="ml-4 list-disc" {...props} />,
+                          }}
+                        >
+                          {p.notes}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        </div>
         {/* Action Buttons */}
         <div className="mt-8 flex justify-center gap-6">
           <Link
