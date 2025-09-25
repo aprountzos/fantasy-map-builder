@@ -29,10 +29,10 @@ jobs:
         uses: ./.github/workflows/setup-node
 
       # 3️⃣ Load environment variables from .env.git
-      - name: Load .env.git 🔑
+      - name: Load .env 🔑
         run: |
-          if [ -f .env.git ]; then
-            export $(grep -v '^#' .env.git | xargs)
+          if [ -f .env ]; then
+            export $(grep -v '^#' .env | xargs)
           fi
 
       # 4️⃣ Setup GitHub Pages
