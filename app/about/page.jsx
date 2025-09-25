@@ -10,12 +10,12 @@ export default function About() {
   const [patchNotesData, setpatchNotesDatas] = useState([]);
 
   useEffect(() => {
-    const path = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/patch_notes/patch_notes.json`
-    fetch(path)
+    fetch('./patch_notes/patch_notes.json')  // relative to current page
       .then(res => res.json())
       .then(data => setpatchNotesDatas(data))
       .catch(err => console.error('Failed to load patch notes:', err))
-  }, []);
+  }, [])
+
 
   const patchNotes = [...patchNotesData].sort((a, b) => {
     const parse = v => v.version.split('.').map(n => parseInt(n))
