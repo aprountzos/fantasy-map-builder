@@ -301,8 +301,18 @@ export default function ExportedFantasyMapViewer({ mapImage, locations = [], reg
   })
 
   // UI helpers with debounced hover to prevent flickering
-  function enterPointer() { document.body.style.cursor = 'pointer' }
-  function leavePointer() { document.body.style.cursor = '' }
+  function enterPointer(stage) { if (stage?.container()) {
+    const container = stage.container();
+    container.style.cursor = 'pointer';
+    }
+  }
+    
+  function leavePointer(stage) {
+    if (stage?.container()) {
+    const container = stage.container();
+    container.style.cursor = 'grab'; // default dragging cursor
+      } 
+  }
 
   function setHoverWithDelay(item) {
     if (hoverTimeoutRef.current) {
@@ -623,11 +633,13 @@ export default function ExportedFantasyMapViewer({ mapImage, locations = [], reg
                         centerAndOpenModal(r, null, null, 1.3, true)
                       }}
                       onMouseEnter={(e) => {
-                        enterPointer()
+                        const stage = e.target.getStage()
+                        enterPointer(stage)
                         setHoverWithDelay({ type: 'region', name: r.name, pointsPercent: r.pointsPercent })
                       }}
-                      onMouseLeave={() => {
-                        leavePointer()
+                      onMouseLeave={(e) => {
+                        const stage = e.target.getStage()
+                        leavePointer(stage)
                         clearHoverWithDelay()
                       }}
                       hitStrokeWidth={10 / scale}
@@ -650,12 +662,14 @@ export default function ExportedFantasyMapViewer({ mapImage, locations = [], reg
                           e.cancelBubble = true
                           centerAndOpenModal(loc, loc.x, loc.y, 2.0, false)
                         }}
-                        onMouseEnter={() => {
-                          enterPointer()
+                        onMouseEnter={(e) => {
+                          const stage = e.target.getStage()
+                          enterPointer(stage)
                           setHoverWithDelay({ type: 'location', name: loc.name, xPercent: loc.x, yPercent: loc.y })
                         }}
-                        onMouseLeave={() => {
-                          leavePointer()
+                        onMouseLeave={(e) => {
+                          const stage = e.target.getStage()
+                          leavePointer(stage)
                           clearHoverWithDelay()
                         }}
                       />
