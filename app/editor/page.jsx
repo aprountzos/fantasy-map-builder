@@ -428,7 +428,7 @@ export default function EditorPage() {
 
   const containerClasses = isFullscreen 
     ? "fixed inset-0 bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white flex flex-col"
-    : "min-h-screen w-full bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white"
+    : "relative min-h-screen flex flex-col bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white overflow-hidden pt-8"
 
   // Toolbar Component
   const ToolbarContent = () => (
@@ -509,6 +509,11 @@ export default function EditorPage() {
       className={containerClasses}
       style={isFullscreen ? { zIndex: 9999 } : {}}
     >
+            {/* Background floating elements */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-purple-700 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-700 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-white/10 rounded-full animate-ping"></div>
+      <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-white/5 rounded-full animate-ping"></div>
       {/* Smart Control Panel - Top Level */}
       <div className={`${isFullscreen ? 'absolute' : 'relative'} top-4 left-4 z-30 flex gap-2`}>
         <button
